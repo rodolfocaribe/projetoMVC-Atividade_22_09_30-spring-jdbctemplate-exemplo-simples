@@ -1,7 +1,5 @@
 package br.edu.iftm.jdbctemplate;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -28,13 +26,11 @@ public class JdbctemplateApplication implements CommandLineRunner {
 		jdbcTemplate.update("INSERT INTO contatos(nome,telefone) VALUES (?,?)", "José Joaquim", "123");
 		jdbcTemplate.update("INSERT INTO contatos(nome,telefone) VALUES (?,?)", "Maria Carolina", "123");
 
-		List<Contato> contatos = jdbcTemplate.query("SELECT id, nome, telefone FROM contatos", (rs, rowNum) -> {
-			return new Contato(rs.getLong("id"), rs.getString("nome"), rs.getString("telefone"));
-		});
-		System.out.println("Listando contatos");
-		for (Contato contato : contatos) {
-			System.out.println(contato.getNome() + " - " + contato.getTelefone());
-		}
+		int contagemDeLinhas = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM contatos", Integer.class);
+		System.out.printf("Há %d registros na tabela \"contatos\".%n", contagemDeLinhas);
+
+		String telefone = jdbcTemplate.queryForObject("SELECT telefone FROM contatos WHERE nome = ?", String.class, "Edson Angoti Júnior");
+		System.out.printf("O telefone de Edson Angoti Júnior é %s.%n", telefone);
 	}
 
 }
